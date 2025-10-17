@@ -176,3 +176,23 @@ Execute cloudflare tunnel.
 cloudflared tunnel run n8n-tunnel &
 ```
 Subdomain n8n.booms.digital
+
+Execute the thunnel automatically with a daemon in /etc/systemd/system/cloudflared-n8n.service
+
+```bash
+[Unit]
+Description=Cloudflare Tunnel for n8n
+After=network.target
+User=administrator
+Environment=HOME=/home/administrator
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/cloudflared tunnel run
+Restart=always
+User=administrator
+Environment=HOME=/home/administrator
+
+[Install]
+WantedBy=multi-user.target
+```
