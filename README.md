@@ -139,12 +139,40 @@ Now the webpage should load.
 
   ![alt text](image-7.png)
 
+Now change the yaml file so n8n recognizes the domain to use in webhooks
+```yaml
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+      - N8N_HOST=n8n.booms.digital
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://n8n.booms.digital/
+      - N8N_EDITOR_BASE_URL=https://n8n.booms.digital/
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: unless-stopped
+volumes:
+  n8n_data:
+```
+
 ### Run the program
 Execute n8n container.
 ```bash
 sudo docker-compose up -d
 ```
+Stop container
+```bash
+sudo docker-compose down -v
+```
 Execute cloudflare tunnel.
 ```bash
 cloudflared tunnel run n8n-tunnel &
 ```
+Subdomain n8n.booms.digital
