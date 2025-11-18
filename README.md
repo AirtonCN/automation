@@ -42,7 +42,7 @@ Create the archive.
 sudo nano /etc/systemd/system/n8n.service
 ```
 Then paste this.
-```
+```bash
 [Unit]
 Description=n8n service with Docker Compose
 Requires=docker.service
@@ -51,7 +51,7 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=true
-WorkingDirectory=/home/administrator/n8n
+WorkingDirectory=[Your Docker compose route]
 ExecStart=/usr/bin/docker-compose up -d
 ExecStop=/usr/bin/docker-compose down
 TimeoutStartSec=0
@@ -60,11 +60,12 @@ TimeoutStartSec=0
 WantedBy=multi-user.target
 ```
 Reload systemd then enable the service.
-```
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable n8n
 ```
 Start the service manually, just once.
+
 # The next steps are optional if you don't have a VPS with public IP
 ### Expose local host without domain
 Exectute this command.
@@ -73,7 +74,7 @@ Exectute this command.
   ```
 Access the url provided by cloudflare, then use this credentials.
     * ai**********ert@gmail.com
-    * Reafko456+
+    * R********+
     ![alt text](image.png)
 If everything is ok, continue with the next step.
 Cons: This URL changes every time you run this command again, so it is not suitable for production environments.
@@ -173,26 +174,33 @@ sudo docker-compose down -v
 ```
 Execute cloudflare tunnel.
 ```bash
-cloudflared tunnel run n8n-tunnel &
+cloudflared tunnel run [your tunnel] &
 ```
 Subdomain n8n.booms.digital
 
-Execute the thunnel automatically with a daemon in /etc/systemd/system/cloudflared-n8n.service
+Execute the tunnel automatically with a daemon in /etc/systemd/system/cloudflared-n8n.service
 
 ```bash
 [Unit]
 Description=Cloudflare Tunnel for n8n
 After=network.target
-User=administrator
-Environment=HOME=/home/administrator
+User=[username]
+Environment=HOME=/home/[username]
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/cloudflared tunnel run
+ExecStart=/usr/local/bin/cloudflared tunnel run [your tunnel]
 Restart=always
-User=administrator
-Environment=HOME=/home/administrator
+User=[username]
+Environment=HOME=/home/[username]
 
 [Install]
 WantedBy=multi-user.target
+```
+
+Enable the service
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable cloudflared-n8n.service
 ```
